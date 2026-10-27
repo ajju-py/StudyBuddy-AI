@@ -52,10 +52,11 @@ class QuizService:
         questions: List[QuizQuestion] = []
 
         if settings.is_groq_configured():
+            context_prompt = f"Use the following verified study context if relevant:\n{context_text}\n" if context_text else ""
             prompt = (
                 f"You are an expert academic examiner. Create a {req.difficulty}-level quiz with exactly {req.question_count} questions "
                 f"on the topic: '{req.topic}'.\n"
-                f"{f'Use the following verified study context if relevant:\n{context_text}\n' if context_text else ''}\n"
+                f"{context_prompt}\n"
                 "Question types allowed: " + ", ".join(req.question_types) + ".\n\n"
                 "Return ONLY a valid JSON array of objects. Each object must follow this EXACT schema:\n"
                 "[\n"

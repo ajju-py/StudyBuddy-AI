@@ -51,9 +51,10 @@ class FlashcardService:
         cards: List[FlashcardItem] = []
 
         if settings.is_groq_configured():
+            context_prompt = f"Context:\n{context_text}\n" if context_text else ""
             prompt = (
                 f"You are an expert tutor. Create exactly {req.card_count} high-yield study flashcards for '{req.topic}'.\n"
-                f"{f'Context:\n{context_text}\n' if context_text else ''}\n"
+                f"{context_prompt}\n"
                 "Each flashcard must have a concise prompt or concept on the FRONT, a clear, complete explanation on the BACK, "
                 "and an intuitive memory HINT.\n\n"
                 "Return ONLY a valid JSON array of objects with this schema:\n"

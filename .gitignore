@@ -39,6 +39,8 @@ htmlcov/
 *.db
 backend/data/
 backend/uploads/
+data/
+.vercel
 
 # Node & Frontend
 frontend/node_modules/

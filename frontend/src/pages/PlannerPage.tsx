@@ -87,41 +87,60 @@ export const PlannerPage: React.FC = () => {
   const getActivityBadge = (type: string) => {
     switch (type) {
       case 'learning':
-        return <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono">Deep Focus</span>;
+        return (
+          <span className="px-2 py-0.5 rounded bg-[#FAF9F5] text-[#18181B] border border-[#E5E2D9] text-[10px] font-mono font-semibold">
+            Deep Focus
+          </span>
+        );
       case 'revision':
-        return <span className="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30 text-[10px] font-mono">Active Recall</span>;
+        return (
+          <span className="px-2 py-0.5 rounded bg-[#FAF9F5] text-[#C25E34] border border-[#C25E34]/30 text-[10px] font-mono font-semibold">
+            Active Recall
+          </span>
+        );
       case 'practice_quiz':
-        return <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">Practice Exam</span>;
+        return (
+          <span className="px-2 py-0.5 rounded bg-[#FAF9F5] text-[#2D5A43] border border-[#2D5A43]/30 text-[10px] font-mono font-semibold">
+            Practice Test
+          </span>
+        );
       case 'break':
-        return <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono">Break</span>;
+        return (
+          <span className="px-2 py-0.5 rounded bg-[#EAE7DF] text-[#57534E] text-[10px] font-mono">
+            Rest Interval
+          </span>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-      {/* 1. HEADER */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+      {/* 1. EDITORIAL HEADER */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E5E2D9] pb-4">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] flex items-center gap-2.5">
-            <Calendar className="w-7 h-7 text-pink-400" />
-            <span>Intelligent Exam Study Planner</span>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F3F1EC] border border-[#E5E2D9] text-[11px] font-mono text-[#57534E]">
+            <Calendar className="w-3.5 h-3.5 text-[#C25E34]" />
+            <span className="uppercase tracking-wider">Exam Readiness Timetable</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-serif-title font-bold text-[#18181B] tracking-tight">
+            Study Timetable & Roadmap
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
-            Algorithmic schedule balancing priority, difficulty, revision cycles, and mock quizzes.
+          <p className="text-xs sm:text-sm text-[#57534E]">
+            Algorithmically structured revision slots balancing topic difficulty, spaced recall, and mock exams.
           </p>
         </div>
 
         {activePlan && (
-          <div className="flex items-center gap-4 glass-panel px-4 py-2 rounded-2xl border border-white/10">
+          <div className="flex items-center gap-3 surface-card px-4 py-2.5 rounded-xl border border-[#E5E2D9]">
             <div className="text-right">
-              <div className="text-[10px] font-mono uppercase text-slate-400">Timetable Completion</div>
-              <div className="text-lg font-bold text-cyan-400 font-['Outfit']">
-                {activePlan.completion_percentage}%
+              <div className="text-[10px] font-mono uppercase text-[#8C877D]">Progress</div>
+              <div className="text-base font-bold font-mono text-[#18181B]">
+                {Math.round(activePlan.completion_percentage)}% Completed
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full border-2 border-cyan-500/30 flex items-center justify-center font-bold text-xs text-cyan-300">
+            <div className="w-9 h-9 rounded-full bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-center font-bold font-mono text-xs text-[#C25E34]">
               {Math.round(activePlan.completion_percentage)}%
             </div>
           </div>
@@ -129,39 +148,39 @@ export const PlannerPage: React.FC = () => {
       </div>
 
       {/* 2. TIMETABLE GENERATOR FORM */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-        <form onSubmit={handleGeneratePlan} className="space-y-6">
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-6">
+        <form onSubmit={handleGeneratePlan} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-300">
-                Examination or Goal Name:
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Examination or Milestone Title:
               </label>
               <input
                 type="text"
                 value={targetExam}
                 onChange={(e) => setTargetExam(e.target.value)}
-                placeholder="e.g. End Semester Exams, GATE CSE 2027..."
-                className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                placeholder="e.g., End Semester Examination, GATE CSE 2027..."
+                className="w-full bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3.5 py-2 text-xs text-[#18181B] focus:outline-none focus:border-[#C25E34]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300">
-                Target Examination Date:
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Examination Date:
               </label>
               <input
                 type="date"
                 value={examDate}
                 onChange={(e) => setExamDate(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3.5 py-2 text-xs text-[#18181B] focus:outline-none focus:border-[#C25E34]"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-300">
-              Daily Available Study Budget: {hoursPerDay} hours/day
+            <label className="block text-xs font-semibold text-[#18181B]">
+              Daily Available Study Budget: <span className="font-mono text-[#C25E34]">{hoursPerDay} hours/day</span>
             </label>
             <input
               type="range"
@@ -170,27 +189,29 @@ export const PlannerPage: React.FC = () => {
               step={0.5}
               value={hoursPerDay}
               onChange={(e) => setHoursPerDay(Number(e.target.value))}
-              className="w-full accent-cyan-500"
+              className="w-full accent-[#C25E34]"
             />
           </div>
 
           {/* Subjects List & Adder */}
-          <div className="space-y-3 pt-2">
-            <label className="block text-xs font-semibold text-slate-300">
-              Target Subjects & Priority:
+          <div className="space-y-3 pt-1">
+            <label className="block text-xs font-semibold text-[#18181B]">
+              Syllabus Modules & Priorities:
             </label>
             <div className="flex flex-wrap gap-2">
               {subjects.map((s, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-200"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] text-xs text-[#18181B]"
                 >
                   <span className="font-semibold">{s.name}</span>
-                  <span className="text-[10px] text-cyan-400 font-mono">({s.priority} / {s.difficulty})</span>
+                  <span className="text-[10px] text-[#C25E34] font-mono">
+                    ({s.priority} • {s.difficulty})
+                  </span>
                   <button
                     type="button"
                     onClick={() => handleRemoveSubject(idx)}
-                    className="text-slate-500 hover:text-rose-400"
+                    className="text-[#8C877D] hover:text-[#C25E34]"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -204,13 +225,13 @@ export const PlannerPage: React.FC = () => {
                 type="text"
                 value={newSubjName}
                 onChange={(e) => setNewSubjName(e.target.value)}
-                placeholder="New subject name..."
-                className="bg-slate-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none"
+                placeholder="Module name..."
+                className="bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3 py-1.5 text-xs text-[#18181B] focus:outline-none focus:border-[#C25E34]"
               />
               <select
                 value={newSubjPriority}
                 onChange={(e) => setNewSubjPriority(e.target.value as any)}
-                className="bg-slate-900 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-300"
+                className="bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-2.5 py-1.5 text-xs text-[#18181B]"
               >
                 <option value="High">High Priority</option>
                 <option value="Medium">Medium Priority</option>
@@ -219,7 +240,7 @@ export const PlannerPage: React.FC = () => {
               <select
                 value={newSubjDifficulty}
                 onChange={(e) => setNewSubjDifficulty(e.target.value as any)}
-                className="bg-slate-900 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-300"
+                className="bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-2.5 py-1.5 text-xs text-[#18181B]"
               >
                 <option value="Hard">Hard Difficulty</option>
                 <option value="Medium">Medium Difficulty</option>
@@ -228,10 +249,10 @@ export const PlannerPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleAddSubject}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold flex items-center gap-1"
+                className="px-3 py-1.5 rounded-lg btn-secondary text-xs font-semibold flex items-center gap-1 text-[#18181B]"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add</span>
+                <span>Add Module</span>
               </button>
             </div>
           </div>
@@ -239,60 +260,60 @@ export const PlannerPage: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading || subjects.length === 0}
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-violet-600 hover:from-pink-400 hover:to-violet-500 text-white font-semibold text-xs shadow-md shadow-pink-500/25 transition-all flex items-center gap-2"
+            className="px-5 py-2.5 rounded-lg btn-terracotta disabled:opacity-40 text-xs font-semibold shadow-xs flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4" />
-            <span>{isLoading ? 'Synthesizing Roadmap...' : 'Generate Optimized Study Plan'}</span>
+            <span>{isLoading ? 'Synthesizing Roadmap...' : 'Construct Study Schedule'}</span>
           </button>
         </form>
       </div>
 
       {/* 3. ACTIVE SCHEDULE VIEW */}
       {activePlan && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E2D9] pb-3">
             <div className="space-y-0.5">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
-                ACTIVE TIMETABLE • EXAM ON {activePlan.exam_date}
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#C25E34] font-semibold">
+                ACTIVE TIMETABLE • EXAM TARGET: {activePlan.exam_date}
               </span>
-              <h2 className="text-xl font-bold text-white font-['Outfit']">
+              <h2 className="text-base font-serif-title font-bold text-[#18181B]">
                 {activePlan.title}
               </h2>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {activePlan.schedule.map((block) => (
               <div
                 key={block.id}
                 onClick={() => handleToggleBlock(block.id, block.completed)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                className={`p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
                   block.completed
-                    ? 'bg-slate-900/40 border-white/5 opacity-60'
-                    : 'glass-card border-white/10 hover:border-cyan-500/30'
+                    ? 'bg-[#FAF9F5] border-[#E5E2D9] opacity-60'
+                    : 'surface-card border-[#E5E2D9] hover:border-[#C25E34]'
                 }`}
               >
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3.5 min-w-0">
                   <div
-                    className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-colors ${
+                    className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${
                       block.completed
-                        ? 'bg-cyan-500 border-cyan-500 text-white'
-                        : 'border-slate-500 bg-slate-900'
+                        ? 'bg-[#2D5A43] border-[#2D5A43] text-white'
+                        : 'border-[#8C877D] bg-[#FFFFFF]'
                     }`}
                   >
-                    {block.completed && <CheckCircle2 className="w-4 h-4" />}
+                    {block.completed && <CheckCircle2 className="w-3.5 h-3.5" />}
                   </div>
 
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] text-slate-400">
+                      <span className="font-mono text-[11px] text-[#8C877D]">
                         {block.date_label}
                       </span>
                       {getActivityBadge(block.activity_type)}
                     </div>
                     <div
-                      className={`text-sm font-semibold ${
-                        block.completed ? 'line-through text-slate-400' : 'text-white'
+                      className={`text-xs sm:text-sm font-semibold truncate ${
+                        block.completed ? 'line-through text-[#8C877D]' : 'text-[#18181B]'
                       }`}
                     >
                       {block.subject}: {block.topic}
@@ -300,8 +321,8 @@ export const PlannerPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs font-mono shrink-0">
-                  <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                <div className="flex items-center gap-1.5 text-[#8C877D] text-xs font-mono shrink-0">
+                  <Clock className="w-3.5 h-3.5 text-[#C25E34]" />
                   <span>{block.duration_minutes}m</span>
                 </div>
               </div>
@@ -312,3 +333,5 @@ export const PlannerPage: React.FC = () => {
     </div>
   );
 };
+
+export default PlannerPage;

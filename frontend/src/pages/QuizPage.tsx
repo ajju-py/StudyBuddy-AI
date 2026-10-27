@@ -91,18 +91,16 @@ export const QuizPage: React.FC = () => {
       setAttemptResult(result);
       setActiveTab('results');
 
-      // Trigger celebratory confetti if passed
       if (result.passed) {
         try {
           confetti({
-            particleCount: 80,
-            spread: 70,
+            particleCount: 60,
+            spread: 60,
             origin: { y: 0.6 },
           });
         } catch {}
       }
 
-      // Refresh history
       api.getQuizHistory().then(setHistoryRecords).catch(console.error);
     } catch (err: any) {
       alert(`Grading failed: ${err.message}`);
@@ -112,63 +110,66 @@ export const QuizPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-      {/* 1. HEADER & NAVIGATION TABS */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="space-y-8 animate-fade-in">
+      {/* 1. HEADER & SEGMENTED WORKSPACE TABS */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#E5E2D9] pb-4">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] flex items-center gap-2.5">
-            <FileQuestion className="w-7 h-7 text-emerald-400" />
-            <span>Practice Examination Hall</span>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F3F1EC] border border-[#E5E2D9] text-[11px] font-mono text-[#57534E]">
+            <FileQuestion className="w-3.5 h-3.5 text-[#2D5A43]" />
+            <span className="uppercase tracking-wider">Evaluation Diagnostic</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-serif-title font-bold text-[#18181B] tracking-tight">
+            Practice Examination Hall
           </h1>
-          <p className="text-slate-400 text-xs sm:text-sm">
-            Deterministic server-side grading with explanatory feedback and real test history.
+          <p className="text-xs sm:text-sm text-[#57534E]">
+            Server-side deterministic scoring with full pedagogical rationales and historical record keeping.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-slate-900 border border-white/10 text-xs">
+        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] text-xs">
           <button
             onClick={() => setActiveTab('generate')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
               activeTab === 'generate'
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#18181B] text-[#FAF9F5] shadow-xs'
+                : 'text-[#57534E] hover:text-[#18181B]'
             }`}
           >
-            Create Quiz
+            Create Exam
           </button>
           {activeQuiz && (
             <button
               onClick={() => setActiveTab('take')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
                 activeTab === 'take'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#18181B] text-[#FAF9F5] shadow-xs'
+                  : 'text-[#57534E] hover:text-[#18181B]'
               }`}
             >
-              Active Exam
+              Active Paper
             </button>
           )}
           {attemptResult && (
             <button
               onClick={() => setActiveTab('results')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
                 activeTab === 'results'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-[#18181B] text-[#FAF9F5] shadow-xs'
+                  : 'text-[#57534E] hover:text-[#18181B]'
               }`}
             >
-              Grade Report
+              Diagnostic Report
             </button>
           )}
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-colors ${
               activeTab === 'history'
-                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#18181B] text-[#FAF9F5] shadow-xs'
+                : 'text-[#57534E] hover:text-[#18181B]'
             }`}
           >
-            Past Attempts ({historyRecords.length})
+            History ({historyRecords.length})
           </button>
         </div>
       </div>
@@ -177,36 +178,38 @@ export const QuizPage: React.FC = () => {
 
       {/* TAB A: GENERATE QUIZ */}
       {activeTab === 'generate' && (
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
+        <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-6">
           <form onSubmit={handleGenerateQuiz} className="space-y-6">
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-slate-300">
-                Examination Topic or Chapter:
+              <label className="block text-xs font-semibold text-[#18181B]">
+                Examination Subject or Syllabus Topic:
               </label>
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                placeholder="e.g., Computer Architecture, Deadlocks, SQL Indexing..."
-                className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                placeholder="e.g., Computer Architecture, Deadlocks, SQL Indexing, Graph Traversal..."
+                className="w-full bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3.5 py-2.5 text-xs text-[#18181B] placeholder-[#8C877D] focus:outline-none focus:border-[#C25E34] font-ui"
               />
             </div>
 
             {/* Optional Document Source */}
             {documents.length > 0 && (
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Ground Quiz in Uploaded Document (Optional):
+                <label className="block text-xs font-semibold text-[#18181B]">
+                  Ground Questions in Ingested Document (Optional):
                 </label>
                 <select
                   value={selectedDocId || ''}
-                  onChange={(e) => setSelectedDocId(e.target.value ? Number(e.target.value) : undefined)}
-                  className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                  onChange={(e) =>
+                    setSelectedDocId(e.target.value ? Number(e.target.value) : undefined)
+                  }
+                  className="w-full bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3.5 py-2 text-xs text-[#18181B] focus:outline-none focus:border-[#C25E34]"
                 >
                   <option value="">General Knowledge / No Document Constraint</option>
                   {documents.map((d) => (
                     <option key={d.id} value={d.id}>
-                      📄 {d.original_name} ({d.file_type})
+                      📄 {d.original_name} ({d.file_type.toUpperCase()})
                     </option>
                   ))}
                 </select>
@@ -216,8 +219,8 @@ export const QuizPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Difficulty Selection */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Target Difficulty:
+                <label className="block text-xs font-semibold text-[#18181B]">
+                  Target Rigor:
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {(['Easy', 'Medium', 'Hard'] as const).map((diff) => (
@@ -225,10 +228,10 @@ export const QuizPage: React.FC = () => {
                       key={diff}
                       type="button"
                       onClick={() => setDifficulty(diff)}
-                      className={`py-2 rounded-xl text-xs font-medium border transition-all ${
+                      className={`py-2 rounded-lg text-xs font-medium border transition-colors ${
                         difficulty === diff
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
-                          : 'bg-slate-900 text-slate-400 border-white/5 hover:text-white'
+                          ? 'bg-[#18181B] text-[#FAF9F5] border-[#18181B] shadow-xs'
+                          : 'bg-[#FAF9F5] text-[#57534E] border-[#E5E2D9] hover:text-[#18181B]'
                       }`}
                     >
                       {diff}
@@ -239,8 +242,8 @@ export const QuizPage: React.FC = () => {
 
               {/* Question Count Selection */}
               <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300">
-                  Number of Questions: {questionCount}
+                <label className="block text-xs font-semibold text-[#18181B]">
+                  Number of Questions: <span className="font-mono text-[#C25E34]">{questionCount}</span>
                 </label>
                 <input
                   type="range"
@@ -248,9 +251,9 @@ export const QuizPage: React.FC = () => {
                   max={10}
                   value={questionCount}
                   onChange={(e) => setQuestionCount(Number(e.target.value))}
-                  className="w-full accent-cyan-500"
+                  className="w-full accent-[#C25E34]"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                <div className="flex justify-between text-[10px] text-[#8C877D] font-mono">
                   <span>2 Questions</span>
                   <span>5 Questions</span>
                   <span>10 Questions</span>
@@ -261,29 +264,29 @@ export const QuizPage: React.FC = () => {
             <button
               type="submit"
               disabled={isGenerating || !topic.trim()}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-semibold text-xs shadow-md shadow-emerald-500/25 transition-all flex items-center gap-2"
+              className="px-5 py-2.5 rounded-lg btn-terracotta disabled:opacity-40 text-xs font-semibold shadow-xs flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
-              <span>{isGenerating ? 'Synthesizing Examination...' : 'Generate Practice Quiz'}</span>
+              <span>{isGenerating ? 'Synthesizing Examination...' : 'Generate Practice Exam'}</span>
             </button>
           </form>
         </div>
       )}
 
-      {/* TAB B: ACTIVE EXAM TAKER */}
+      {/* TAB B: ACTIVE EXAM TAKER (FOCUSED EXAMINATION CANVAS) */}
       {activeTab === 'take' && activeQuiz && (
         <div className="space-y-6">
-          <div className="glass-panel p-5 rounded-2xl border border-white/10 flex items-center justify-between">
+          <div className="surface-card p-5 rounded-xl border border-[#E5E2D9] flex items-center justify-between">
             <div className="space-y-0.5">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
-                ACTIVE PRACTICE EXAM • {activeQuiz.difficulty.toUpperCase()}
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#C25E34] font-semibold">
+                ACTIVE EXAMINATION • {activeQuiz.difficulty.toUpperCase()}
               </span>
-              <h2 className="text-base font-bold text-white font-['Outfit']">
+              <h2 className="text-base font-serif-title font-bold text-[#18181B]">
                 {activeQuiz.title}
               </h2>
             </div>
-            <div className="text-right text-xs text-slate-400 font-mono">
-              Answered: {Object.keys(userAnswers).length} / {activeQuiz.questions.length}
+            <div className="text-right text-xs text-[#57534E] font-mono">
+              Progress: <strong className="text-[#18181B]">{Object.keys(userAnswers).length}</strong> / {activeQuiz.questions.length} answered
             </div>
           </div>
 
@@ -291,18 +294,18 @@ export const QuizPage: React.FC = () => {
             {activeQuiz.questions.map((q, idx) => (
               <div
                 key={q.id}
-                className="glass-card p-6 rounded-2xl border border-white/10 space-y-4"
+                className="surface-card p-6 rounded-xl border border-[#E5E2D9] space-y-4"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                  <div className="flex items-start gap-3">
+                    <span className="w-6 h-6 rounded bg-[#F3F1EC] text-[#18181B] font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-[#E5E2D9]">
                       {idx + 1}
                     </span>
-                    <h3 className="text-sm font-semibold text-white leading-relaxed">
+                    <h3 className="text-sm font-semibold text-[#18181B] leading-relaxed font-ui">
                       {q.question}
                     </h3>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-slate-900 shrink-0">
+                  <span className="text-[10px] font-mono text-[#8C877D] px-2 py-0.5 rounded bg-[#FAF9F5] border border-[#E5E2D9] shrink-0">
                     {q.points} pt
                   </span>
                 </div>
@@ -315,7 +318,7 @@ export const QuizPage: React.FC = () => {
                       value={userAnswers[String(q.id)] || ''}
                       onChange={(e) => handleSelectOption(q.id, e.target.value)}
                       placeholder="Type your concise answer here..."
-                      className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full bg-[#FAF9F5] border border-[#E5E2D9] rounded-lg px-3.5 py-2 text-xs text-[#18181B] placeholder-[#8C877D] focus:outline-none focus:border-[#C25E34]"
                     />
                   </div>
                 ) : (
@@ -327,20 +330,22 @@ export const QuizPage: React.FC = () => {
                           key={oIdx}
                           type="button"
                           onClick={() => handleSelectOption(q.id, opt)}
-                          className={`p-3.5 rounded-xl border text-left text-xs font-medium transition-all flex items-center gap-3 ${
+                          className={`p-3.5 rounded-lg border text-left text-xs font-medium transition-colors flex items-center gap-3 ${
                             isSelected
-                              ? 'bg-cyan-500/20 border-cyan-500 text-white shadow-md shadow-cyan-500/20'
-                              : 'bg-slate-900/70 border-white/5 text-slate-300 hover:bg-slate-800'
+                              ? 'bg-[#FAF9F5] border-[#C25E34] text-[#18181B] shadow-xs'
+                              : 'bg-[#FFFFFF] border-[#E5E2D9] text-[#57534E] hover:border-[#8C877D] hover:text-[#18181B]'
                           }`}
                         >
                           <div
-                            className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                              isSelected ? 'border-cyan-400 bg-cyan-500' : 'border-slate-500'
+                            className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${
+                              isSelected
+                                ? 'border-[#C25E34] bg-[#C25E34]'
+                                : 'border-[#8C877D]'
                             }`}
                           >
                             {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                           </div>
-                          <span>{opt}</span>
+                          <span className="leading-normal">{opt}</span>
                         </button>
                       );
                     })}
@@ -354,108 +359,112 @@ export const QuizPage: React.FC = () => {
             <button
               onClick={handleSubmitQuiz}
               disabled={isSubmitting}
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-lg btn-terracotta disabled:opacity-40 text-xs font-semibold shadow-xs flex items-center gap-2"
             >
               <Award className="w-4 h-4" />
-              <span>{isSubmitting ? 'Grading Answers...' : 'Submit Examination & Calculate Score'}</span>
+              <span>{isSubmitting ? 'Grading Answers...' : 'Submit Paper & Finalize Score'}</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* TAB C: DETAILED GRADE REPORT */}
+      {/* TAB C: DETAILED DIAGNOSTIC GRADE REPORT */}
       {activeTab === 'results' && attemptResult && (
-        <div className="space-y-8 animate-fadeIn">
+        <div className="space-y-6">
           {/* Result Banner */}
           <div
-            className={`p-6 sm:p-8 rounded-3xl border flex flex-col sm:flex-row items-center justify-between gap-6 ${
+            className={`p-6 sm:p-8 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-6 ${
               attemptResult.passed
-                ? 'bg-emerald-950/40 border-emerald-500/40'
-                : 'bg-rose-950/40 border-rose-500/40'
+                ? 'bg-[#EAF3EE] border-[#2D5A43]/20'
+                : 'bg-[#FDF2F2] border-[#C25E34]/30'
             }`}
           >
             <div className="space-y-1 text-center sm:text-left">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#57534E]">
                 OFFICIAL GRADE REPORT
               </span>
-              <h2 className="text-2xl font-bold text-white font-['Outfit']">
+              <h2 className="text-xl sm:text-2xl font-serif-title font-bold text-[#18181B]">
                 {attemptResult.quiz_title}
               </h2>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-[#57534E]">
                 {attemptResult.passed
-                  ? '🎉 Congratulations! You satisfied the passing benchmark (>= 60%).'
-                  : 'Needs Review. Practice difficult questions and retake when ready.'}
+                  ? 'Benchmark Achieved: The score satisfies academic passing standards (>= 60%).'
+                  : 'Diagnostic Review: Review pedagogical feedback below and retake for mastery.'}
               </p>
             </div>
 
             <div className="flex items-center gap-6">
               <div className="text-center">
                 <div
-                  className={`text-4xl font-extrabold font-['Outfit'] ${
-                    attemptResult.passed ? 'text-emerald-400' : 'text-rose-400'
+                  className={`text-4xl font-mono font-bold ${
+                    attemptResult.passed ? 'text-[#2D5A43]' : 'text-[#C25E34]'
                   }`}
                 >
                   {attemptResult.percentage}%
                 </div>
-                <div className="text-xs text-slate-400 font-mono">
+                <div className="text-xs text-[#57534E] font-mono">
                   {attemptResult.score} / {attemptResult.max_score} Points
                 </div>
               </div>
 
               <button
                 onClick={() => setActiveTab('generate')}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-white/10 text-xs font-semibold"
+                className="px-4 py-2 rounded-lg btn-secondary text-xs font-medium text-[#18181B]"
               >
-                Take Another
+                New Assessment
               </button>
             </div>
           </div>
 
           {/* Breakdown per Question */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit']">
-              Question-by-Question Diagnostic Feedback
+            <h3 className="text-xs font-mono uppercase tracking-wider text-[#8C877D] font-semibold">
+              Question Diagnostic Analysis
             </h3>
             {attemptResult.feedback.map((f, i) => (
               <div
                 key={f.question_id}
-                className={`p-5 rounded-2xl border space-y-3 text-xs ${
-                  f.is_correct
-                    ? 'bg-emerald-950/20 border-emerald-500/30'
-                    : 'bg-rose-950/20 border-rose-500/30'
-                }`}
+                className="surface-card p-5 rounded-xl border border-[#E5E2D9] space-y-3 text-xs"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2 font-semibold text-white">
+                  <div className="flex items-start gap-2.5 font-semibold text-[#18181B]">
                     {f.is_correct ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-[#2D5A43] shrink-0 mt-0.5" />
                     ) : (
-                      <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                      <XCircle className="w-4 h-4 text-[#C25E34] shrink-0 mt-0.5" />
                     )}
-                    <span>
+                    <span className="font-ui leading-relaxed">
                       Q{i + 1}: {f.question}
                     </span>
                   </div>
-                  <span className="font-mono text-slate-400 shrink-0">
+                  <span className="font-mono text-[#8C877D] shrink-0">
                     {f.points_awarded} pts
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-[11px]">
-                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5 space-y-0.5">
-                    <span className="text-slate-400 font-medium">Your Selected Answer:</span>
-                    <div className={f.is_correct ? 'text-emerald-300 font-semibold' : 'text-rose-300 font-semibold'}>
+                  <div className="p-3 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] space-y-1">
+                    <span className="text-[#8C877D] font-mono uppercase text-[10px]">
+                      Your Answer:
+                    </span>
+                    <div
+                      className={`font-semibold ${
+                        f.is_correct ? 'text-[#2D5A43]' : 'text-[#C25E34]'
+                      }`}
+                    >
                       {f.user_answer}
                     </div>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-white/5 space-y-0.5">
-                    <span className="text-slate-400 font-medium">Verified Correct Answer:</span>
-                    <div className="text-cyan-300 font-semibold">{f.correct_answer}</div>
+                  <div className="p-3 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] space-y-1">
+                    <span className="text-[#8C877D] font-mono uppercase text-[10px]">
+                      Correct Answer:
+                    </span>
+                    <div className="text-[#18181B] font-semibold">{f.correct_answer}</div>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-900/90 text-slate-300 text-[11px] leading-relaxed border border-white/5">
-                  <strong className="text-cyan-400 font-medium">Explanation: </strong>
+                <div className="p-3 rounded-lg bg-[#FAF9F5] text-[#57534E] text-[11px] leading-relaxed border border-[#E5E2D9] font-ui">
+                  <strong className="text-[#18181B] font-semibold">Pedagogical Explanation: </strong>
                   {f.explanation}
                 </div>
               </div>
@@ -466,52 +475,54 @@ export const QuizPage: React.FC = () => {
 
       {/* TAB D: ATTEMPTS HISTORY */}
       {activeTab === 'history' && (
-        <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
-          <h2 className="text-base font-bold text-white font-['Outfit'] flex items-center gap-2">
-            <History className="w-4 h-4 text-cyan-400" />
-            <span>Recorded Examination History</span>
-          </h2>
+        <div className="surface-card p-6 rounded-xl border border-[#E5E2D9] space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#E5E2D9] pb-3">
+            <History className="w-4 h-4 text-[#18181B]" />
+            <h2 className="font-serif-title font-bold text-sm text-[#18181B]">
+              Recorded Examination History
+            </h2>
+          </div>
 
           {historyRecords.length === 0 ? (
-            <div className="py-12 text-center text-slate-400 text-xs">
-              No examination attempts recorded yet. Create and complete your first quiz!
+            <div className="py-12 text-center text-[#8C877D] text-xs">
+              No examination attempts logged yet. Complete a quiz to archive results.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900/80 text-slate-400 font-mono uppercase text-[10px] border-b border-white/5">
+                <thead className="bg-[#FAF9F5] text-[#57534E] font-mono uppercase text-[10px] border-b border-[#E5E2D9]">
                   <tr>
-                    <th className="p-3">Examination Title</th>
-                    <th className="p-3">Difficulty</th>
-                    <th className="p-3">Score</th>
-                    <th className="p-3">Percentage</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3">Date</th>
+                    <th className="p-3 font-semibold">Subject Title</th>
+                    <th className="p-3 font-semibold">Rigor</th>
+                    <th className="p-3 font-semibold">Points</th>
+                    <th className="p-3 font-semibold">Percentage</th>
+                    <th className="p-3 font-semibold">Outcome</th>
+                    <th className="p-3 font-semibold">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[#E5E2D9]">
                   {historyRecords.map((rec) => {
                     const passed = rec.percentage >= 60;
                     return (
-                      <tr key={rec.attempt_id} className="hover:bg-slate-800/40">
-                        <td className="p-3 font-medium text-white">{rec.quiz_title}</td>
-                        <td className="p-3 font-mono text-slate-400">{rec.difficulty}</td>
-                        <td className="p-3 font-mono text-slate-300">
+                      <tr key={rec.attempt_id} className="hover:bg-[#FAF9F5] transition-colors">
+                        <td className="p-3 font-medium text-[#18181B] font-ui">{rec.quiz_title}</td>
+                        <td className="p-3 font-mono text-[#57534E]">{rec.difficulty}</td>
+                        <td className="p-3 font-mono text-[#18181B]">
                           {rec.score} / {rec.max_score}
                         </td>
-                        <td className="p-3 font-mono font-bold text-white">{rec.percentage}%</td>
+                        <td className="p-3 font-mono font-bold text-[#18181B]">{rec.percentage}%</td>
                         <td className="p-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase ${
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-semibold ${
                               passed
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                ? 'bg-[#EAF3EE] text-[#2D5A43]'
+                                : 'bg-[#FDF2F2] text-[#C25E34]'
                             }`}
                           >
-                            {passed ? 'Passed' : 'Failed'}
+                            {passed ? 'Passed' : 'Needs Review'}
                           </span>
                         </td>
-                        <td className="p-3 text-slate-500 text-[11px]">
+                        <td className="p-3 text-[#8C877D] text-[11px] font-mono">
                           {new Date(rec.completed_at).toLocaleDateString()}
                         </td>
                       </tr>
@@ -526,3 +537,5 @@ export const QuizPage: React.FC = () => {
     </div>
   );
 };
+
+export default QuizPage;

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { Network, ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { FallbackScene } from './FallbackScene';
 
 function isWebGLAvailable(): boolean {
@@ -14,21 +15,108 @@ function isWebGLAvailable(): boolean {
   }
 }
 
-export const KnowledgeSphereScene: React.FC = () => {
+interface ConceptNodeData {
+  id: number;
+  name: string;
+  category: string;
+  description: string;
+  coords: [number, number, number];
+  color: number;
+  connectedTo: number[]; // indices of connected nodes
+}
+
+const NODES_DATA: ConceptNodeData[] = [
+  {
+    id: 0,
+    name: 'Data Structures',
+    category: 'Foundations',
+    description: 'Arrays, Trees, Graphs, and Hash Maps forming memory abstractions.',
+    coords: [-2.2, 0.8, 0.2],
+    color: 0x1E3A5F,
+    connectedTo: [1, 5],
+  },
+  {
+    id: 1,
+    name: 'Algorithms',
+    category: 'Core Theory',
+    description: 'Divide-and-conquer, dynamic programming, and complexity analysis.',
+    coords: [-0.6, 1.6, 0.5],
+    color: 0xC25E34,
+    connectedTo: [7],
+  },
+  {
+    id: 2,
+    name: 'Architecture',
+    category: 'Hardware Systems',
+    description: 'ALU, pipeline hazard resolution, and memory hierarchies.',
+    coords: [-2.0, -1.2, -0.4],
+    color: 0x57534E,
+    connectedTo: [3],
+  },
+  {
+    id: 3,
+    name: 'Operating Systems',
+    category: 'Systems Software',
+    description: 'Process scheduling, virtual memory paging, and concurrency locks.',
+    coords: [-0.4, -0.7, 0.3],
+    color: 0x1E3A5F,
+    connectedTo: [4, 6],
+  },
+  {
+    id: 4,
+    name: 'Networks',
+    category: 'Communications',
+    description: 'TCP/IP socket flow, routing tables, and congestion avoidance.',
+    coords: [1.2, -1.3, -0.3],
+    color: 0x57534E,
+    connectedTo: [6],
+  },
+  {
+    id: 5,
+    name: 'Databases',
+    category: 'Data & Storage',
+    description: 'B+ Tree indexing, ACID transactions, and normalization forms.',
+    coords: [0.9, 0.6, -0.5],
+    color: 0x2D5A43,
+    connectedTo: [6],
+  },
+  {
+    id: 6,
+    name: 'Distributed Systems',
+    category: 'Advanced Systems',
+    description: 'Raft consensus, CAP theorem, and fault-tolerant replication.',
+    coords: [2.3, -0.4, 0.4],
+    color: 0xC25E34,
+    connectedTo: [],
+  },
+  {
+    id: 7,
+    name: 'Machine Learning',
+    category: 'AI & Analytics',
+    description: 'Gradient descent, backpropagation, and transformer attention.',
+    coords: [1.8, 1.7, 0.2],
+    color: 0x1E3A5F,
+    connectedTo: [],
+  },
+];
+
+interface KnowledgeSphereSceneProps {
+  onSelectConcept?: (conceptName: string) => void;
+}
+
+export const KnowledgeSphereScene: React.FC<KnowledgeSphereSceneProps> = ({ onSelectConcept }) => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const [hasWebGL, setHasWebGL] = useState<boolean>(true);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(false);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [hasWebGL, setHasWebGL] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<ConceptNodeData | null>(NODES_DATA[1]); // Default Algorithms
 
   useEffect(() => {
-    // Check reduced motion
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (motionQuery.matches) {
       setPrefersReducedMotion(true);
       return;
     }
 
-    // Check WebGL availability
     if (!isWebGLAvailable()) {
       setHasWebGL(false);
       return;
@@ -37,15 +125,15 @@ export const KnowledgeSphereScene: React.FC = () => {
     const container = mountRef.current;
     if (!container) return;
 
-    let width = container.clientWidth || 400;
-    let height = container.clientHeight || 400;
+    let width = container.clientWidth || 600;
+    let height = container.clientHeight || 380;
 
     // 1. Scene & Camera
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x080c14, 0.08);
+    scene.background = new THREE.Color(0xF9F8F6);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.z = 7;
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
+    camera.position.set(0, 0, 7.5);
 
     // 2. Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -55,127 +143,100 @@ export const KnowledgeSphereScene: React.FC = () => {
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
     container.appendChild(renderer.domElement);
 
-    // 3. Central Knowledge Sphere Group
-    const sphereGroup = new THREE.Group();
-    scene.add(sphereGroup);
+    // 3. Graph Group
+    const graphGroup = new THREE.Group();
+    scene.add(graphGroup);
 
-    // Outer Geometric Wireframe (Knowledge Cage)
-    const outerGeo = new THREE.IcosahedronGeometry(2.3, 2);
-    const outerMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35,
-      roughness: 0.2,
-      metalness: 0.8,
-    });
-    const outerMesh = new THREE.Mesh(outerGeo, outerMat);
-    sphereGroup.add(outerMesh);
-
-    // Inner Glowing Core (Cognitive Core)
-    const innerGeo = new THREE.IcosahedronGeometry(1.4, 1);
-    const innerMat = new THREE.MeshStandardMaterial({
-      color: 0x8b5cf6,
-      transparent: true,
-      opacity: 0.65,
-      roughness: 0.1,
-      metalness: 0.5,
-      flatShading: true,
-    });
-    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    sphereGroup.add(innerMesh);
-
-    // Innermost Dense Spark
-    const sparkGeo = new THREE.SphereGeometry(0.5, 16, 16);
-    const sparkMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.85,
-    });
-    const sparkMesh = new THREE.Mesh(sparkGeo, sparkMat);
-    sphereGroup.add(sparkMesh);
-
-    // 4. Orbiting Particle Constellation
-    const particleCount = 240;
-    const particlePositions = new Float32Array(particleCount * 3);
-    const particleSizes = new Float32Array(particleCount);
-
-    for (let i = 0; i < particleCount; i++) {
-      // Distribute evenly in a spherical shell (r between 2.8 and 4.2)
-      const u = Math.random();
-      const v = Math.random();
-      const theta = u * 2.0 * Math.PI;
-      const phi = Math.acos(2.0 * v - 1.0);
-      const r = 2.8 + Math.random() * 1.4;
-
-      const x = r * Math.sin(phi) * Math.cos(theta);
-      const y = r * Math.sin(phi) * Math.sin(theta);
-      const z = r * Math.cos(phi);
-
-      particlePositions[i * 3] = x;
-      particlePositions[i * 3 + 1] = y;
-      particlePositions[i * 3 + 2] = z;
-      particleSizes[i] = Math.random() * 2 + 1;
-    }
-
-    const particleGeo = new THREE.BufferGeometry();
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-
-    const particleMat = new THREE.PointsMaterial({
-      color: 0x38bdf8,
-      size: 0.06,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending,
-    });
-    const particlePoints = new THREE.Points(particleGeo, particleMat);
-    scene.add(particlePoints);
-
-    // 5. Lighting
-    const ambientLight = new THREE.AmbientLight(0x0f172a, 2.5);
+    // 4. Lighting
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.2);
     scene.add(ambientLight);
 
-    const cyanLight = new THREE.PointLight(0x38bdf8, 4.0, 20);
-    cyanLight.position.set(5, 4, 4);
-    scene.add(cyanLight);
+    const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    dirLight.position.set(5, 8, 5);
+    scene.add(dirLight);
 
-    const violetLight = new THREE.PointLight(0xa855f7, 3.5, 20);
-    violetLight.position.set(-5, -4, 2);
-    scene.add(violetLight);
+    // 5. Construct Nodes & Edges
+    const nodeMeshes: THREE.Mesh[] = [];
+    const sphereGeo = new THREE.SphereGeometry(0.24, 24, 24);
 
-    // 6. Interactive Mouse Movement
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetRotationX = 0;
-    let targetRotationY = 0;
+    NODES_DATA.forEach((node) => {
+      const mat = new THREE.MeshStandardMaterial({
+        color: node.color,
+        roughness: 0.3,
+        metalness: 0.1,
+      });
+      const mesh = new THREE.Mesh(sphereGeo, mat);
+      mesh.position.set(...node.coords);
+      mesh.userData = { nodeData: node };
+      graphGroup.add(mesh);
+      nodeMeshes.push(mesh);
+    });
 
-    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
-      let clientX = 0;
-      let clientY = 0;
-      if ('touches' in e && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      } else if ('clientX' in e) {
-        clientX = e.clientX;
-        clientY = e.clientY;
-      }
+    // Construct Edges
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0xD5D1C4,
+      transparent: true,
+      opacity: 0.8,
+      linewidth: 1,
+    });
 
+    NODES_DATA.forEach((node) => {
+      node.connectedTo.forEach((targetIdx) => {
+        const targetNode = NODES_DATA[targetIdx];
+        if (!targetNode) return;
+
+        const points = [
+          new THREE.Vector3(...node.coords),
+          new THREE.Vector3(...targetNode.coords),
+        ];
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(lineGeo, lineMat);
+        graphGroup.add(line);
+      });
+    });
+
+    // 6. Raycasting & Interaction
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const getPointerCoords = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
-      const x = (clientX - rect.left) / rect.width - 0.5;
-      const y = (clientY - rect.top) / rect.height - 0.5;
-
-      mouseX = x * 2;
-      mouseY = y * 2;
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     };
 
-    window.addEventListener('mousemove', handlePointerMove, { passive: true });
-    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    const handlePointerMove = (e: MouseEvent) => {
+      getPointerCoords(e);
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(nodeMeshes);
 
-    // 7. Resize Handler
+      if (intersects.length > 0) {
+        container.style.cursor = 'pointer';
+        const hovered = intersects[0].object.userData.nodeData as ConceptNodeData;
+        setSelectedNode(hovered);
+      } else {
+        container.style.cursor = 'default';
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      getPointerCoords(e);
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(nodeMeshes);
+
+      if (intersects.length > 0) {
+        const clicked = intersects[0].object.userData.nodeData as ConceptNodeData;
+        setSelectedNode(clicked);
+        onSelectConcept?.(clicked.name);
+      }
+    };
+
+    container.addEventListener('mousemove', handlePointerMove, { passive: true });
+    container.addEventListener('click', handleClick);
+
+    // 7. Resize Listener
     const handleResize = () => {
       if (!container) return;
       width = container.clientWidth;
@@ -186,83 +247,121 @@ export const KnowledgeSphereScene: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // 8. Animation Loop
-    let animationFrameId: number;
+    // 8. Subtle Restrained Animation
+    let animationId: number;
     let clock = new THREE.Clock();
 
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      animationId = requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
 
-      // Smooth mouse follow (LERP)
-      targetRotationY += (mouseX * 0.8 - targetRotationY) * 0.05;
-      targetRotationX += (mouseY * 0.8 - targetRotationX) * 0.05;
+      // Gentle, restrained orbital sway (not endless rapid spinning)
+      graphGroup.rotation.y = Math.sin(elapsed * 0.15) * 0.25;
+      graphGroup.rotation.x = Math.cos(elapsed * 0.1) * 0.1;
 
-      // Rotate Knowledge Sphere
-      sphereGroup.rotation.y = elapsedTime * 0.25 + targetRotationY;
-      sphereGroup.rotation.x = Math.sin(elapsedTime * 0.15) * 0.2 + targetRotationX;
-
-      // Inner Core counter-rotation & subtle pulse
-      innerMesh.rotation.y = -elapsedTime * 0.4;
-      innerMesh.rotation.z = elapsedTime * 0.2;
-      const pulseScale = 1.0 + Math.sin(elapsedTime * 2.0) * 0.06;
-      innerMesh.scale.set(pulseScale, pulseScale, pulseScale);
-
-      // Rotate Particle Cloud
-      particlePoints.rotation.y = -elapsedTime * 0.1;
-      particlePoints.rotation.x = Math.cos(elapsedTime * 0.08) * 0.1;
-
-      // Subtle float
-      sphereGroup.position.y = Math.sin(elapsedTime * 0.8) * 0.12;
+      // Pulse selected node
+      nodeMeshes.forEach((mesh) => {
+        const data = mesh.userData.nodeData as ConceptNodeData;
+        if (selectedNode && data.id === selectedNode.id) {
+          const pulse = 1.15 + Math.sin(elapsed * 4.0) * 0.05;
+          mesh.scale.set(pulse, pulse, pulse);
+        } else {
+          mesh.scale.set(1.0, 1.0, 1.0);
+        }
+      });
 
       renderer.render(scene, camera);
     };
 
     animate();
-    setIsLoaded(true);
 
-    // Cleanup on unmount
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('mousemove', handlePointerMove);
-      window.removeEventListener('touchmove', handlePointerMove);
+      cancelAnimationFrame(animationId);
+      container.removeEventListener('mousemove', handlePointerMove);
+      container.removeEventListener('click', handleClick);
       window.removeEventListener('resize', handleResize);
 
       if (container && renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
       }
 
-      // Dispose resources
-      outerGeo.dispose();
-      outerMat.dispose();
-      innerGeo.dispose();
-      innerMat.dispose();
-      sparkGeo.dispose();
-      sparkMat.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
+      sphereGeo.dispose();
+      lineMat.dispose();
       renderer.dispose();
     };
   }, [hasWebGL, prefersReducedMotion]);
 
   if (prefersReducedMotion) {
-    return <FallbackScene reason="Reduced motion mode enabled" />;
+    return <FallbackScene reason="Reduced motion preference active" onSelectConcept={onSelectConcept} />;
   }
 
   if (!hasWebGL) {
-    return <FallbackScene reason="WebGL unavailable on this device" />;
+    return <FallbackScene reason="WebGL unavailable" onSelectConcept={onSelectConcept} />;
   }
 
   return (
-    <div className="relative w-full h-[360px] md:h-[480px] flex items-center justify-center overflow-hidden">
-      {/* 3D Canvas Mount Point */}
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+    <div className="surface-card rounded-xl border border-[#E5E2D9] overflow-hidden flex flex-col md:flex-row">
+      {/* 3D Visual Canvas */}
+      <div className="relative flex-1 h-[280px] sm:h-[340px] md:h-[400px] bg-[#F9F8F6]">
+        <div ref={mountRef} className="w-full h-full" />
+        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm border border-[#E5E2D9] px-2.5 py-1 rounded text-[11px] font-mono text-[#57534E] flex items-center gap-1.5 shadow-xs">
+          <Network className="w-3.5 h-3.5 text-[#C25E34]" />
+          <span>Curriculum Topology (Click nodes to inspect)</span>
+        </div>
+      </div>
 
-      {/* Subtle interaction tip overlay */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 pointer-events-none">
-        <span className="text-[11px] font-mono tracking-wider uppercase text-cyan-400/60 bg-slate-900/60 backdrop-blur-md px-3 py-1 rounded-full border border-cyan-500/20">
-          Interactive 3D Knowledge Core • Hover / Drag to explore
-        </span>
+      {/* Concept Inspector HUD */}
+      <div className="w-full md:w-80 p-5 bg-[#FDFCFB] border-t md:border-t-0 md:border-l border-[#E5E2D9] flex flex-col justify-between space-y-4">
+        {selectedNode ? (
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#C25E34] font-semibold">
+                {selectedNode.category}
+              </span>
+              <h4 className="text-lg font-bold text-[#18181B] font-serif-title">
+                {selectedNode.name}
+              </h4>
+            </div>
+
+            <p className="text-xs text-[#57534E] leading-relaxed">
+              {selectedNode.description}
+            </p>
+
+            {selectedNode.connectedTo.length > 0 && (
+              <div className="pt-2 border-t border-[#E5E2D9] space-y-1.5">
+                <span className="text-[10px] font-mono uppercase text-[#8C877D] tracking-wider">
+                  Prerequisites / Feeds Into:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedNode.connectedTo.map((idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-0.5 rounded text-[11px] font-medium bg-[#F5F3ED] text-[#18181B] border border-[#E5E2D9]"
+                    >
+                      {NODES_DATA[idx]?.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-xs text-[#8C877D] italic">
+            Hover or click any node in the constellation to inspect its academic curriculum connections.
+          </div>
+        )}
+
+        <div className="pt-2">
+          {selectedNode && onSelectConcept && (
+            <button
+              onClick={() => onSelectConcept(selectedNode.name)}
+              className="w-full py-2 px-3 rounded-lg btn-terracotta text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs"
+            >
+              <span>Study Topic with AI Tutor</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

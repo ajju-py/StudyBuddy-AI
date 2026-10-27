@@ -7,11 +7,11 @@ import {
   Calendar,
   Sparkles,
   ArrowRight,
-  TrendingUp,
   Award,
   CheckCircle,
   Clock,
   BookOpen,
+  Compass,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { ProgressAnalytics, DocumentInfo } from '../types';
@@ -44,212 +44,260 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateTab }) =
   }, []);
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* 1. WELCOME & GREETING BANNER */}
-      <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl glass-panel-glow border border-cyan-500/30">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/30 text-xs font-mono text-cyan-300">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Intelligent Study Command Center</span>
+    <div className="space-y-8 animate-fade-in">
+      {/* 1. EDITORIAL WELCOME BANNER */}
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] relative overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F3F1EC] border border-[#E5E2D9] text-[11px] font-mono text-[#57534E]">
+              <Sparkles className="w-3.5 h-3.5 text-[#C25E34]" />
+              <span className="uppercase tracking-wider">Academic Command Center</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit']">
-              Welcome to StudyBuddy AI
+            <h1 className="text-2xl sm:text-3xl font-serif-title font-bold text-[#18181B] tracking-tight">
+              Study Workspace Overview
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
-              Track your authentic exam readiness, test your recall, query ingested textbooks, and master complex engineering concepts.
+            <p className="text-xs sm:text-sm text-[#57534E] leading-relaxed">
+              Track authentic examination readiness, test recall against ingested engineering textbooks, 
+              generate deterministic quizzes, and review spaced flashcard decks.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => onNavigateTab('assistant')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-md shadow-cyan-500/25 transition-all hover:scale-[1.02]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg btn-terracotta text-xs font-semibold shadow-xs"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Ask Assistant</span>
+              <span>Ask AI Tutor</span>
             </button>
             <button
               onClick={() => onNavigateTab('documents')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass-panel hover:bg-slate-800 text-slate-200 font-medium text-xs transition-all hover:border-cyan-500/30"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg btn-secondary text-xs font-medium text-[#18181B]"
             >
-              <FileText className="w-4 h-4 text-cyan-400" />
-              <span>Upload Material</span>
+              <FileText className="w-4 h-4 text-[#8C877D]" />
+              <span>Upload Notes</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 2. REAL METRIC TILES */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {/* Metric 1: Questions Answered */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
+      {/* 2. ACADEMIC LEDGER: KEY STUDY METRICS */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+        {/* Metric 1 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
             <span>Questions</span>
-            <CheckCircle className="w-4 h-4 text-cyan-400" />
+            <CheckCircle className="w-3.5 h-3.5 text-[#2D5A43]" />
           </div>
-          <div className="text-2xl font-bold text-white font-['Outfit']">
-            {isLoading ? '...' : analytics?.total_questions_answered ?? 0}
+          <div className="text-2xl font-bold font-mono text-[#18181B]">
+            {isLoading ? '—' : analytics?.total_questions_answered ?? 0}
           </div>
-          <p className="text-[11px] text-slate-400">Exam questions answered</p>
+          <p className="text-[11px] text-[#8C877D]">Answered in sessions</p>
         </div>
 
-        {/* Metric 2: Quizzes Completed */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
+        {/* Metric 2 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
             <span>Quizzes</span>
-            <FileQuestion className="w-4 h-4 text-violet-400" />
+            <FileQuestion className="w-3.5 h-3.5 text-[#C25E34]" />
           </div>
-          <div className="text-2xl font-bold text-white font-['Outfit']">
-            {isLoading ? '...' : analytics?.total_quizzes_completed ?? 0}
+          <div className="text-2xl font-bold font-mono text-[#18181B]">
+            {isLoading ? '—' : analytics?.total_quizzes_completed ?? 0}
           </div>
-          <p className="text-[11px] text-slate-400">Examinations finished</p>
+          <p className="text-[11px] text-[#8C877D]">Tests completed</p>
         </div>
 
-        {/* Metric 3: Actual Average Score */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>Avg Score</span>
-            <Award className="w-4 h-4 text-emerald-400" />
+        {/* Metric 3 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
+            <span>Average</span>
+            <Award className="w-3.5 h-3.5 text-[#2D5A43]" />
           </div>
-          <div className="text-2xl font-bold text-emerald-400 font-['Outfit']">
-            {isLoading ? '...' : `${analytics?.actual_average_quiz_score ?? 0}%`}
+          <div className="text-2xl font-bold font-mono text-[#2D5A43]">
+            {isLoading ? '—' : `${analytics?.actual_average_quiz_score ?? 0}%`}
           </div>
-          <p className="text-[11px] text-slate-400">Actual test average</p>
+          <p className="text-[11px] text-[#8C877D]">Historical exam score</p>
         </div>
 
-        {/* Metric 4: Flashcards Reviewed */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
+        {/* Metric 4 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
             <span>Flashcards</span>
-            <Layers className="w-4 h-4 text-amber-400" />
+            <Layers className="w-3.5 h-3.5 text-[#C25E34]" />
           </div>
-          <div className="text-2xl font-bold text-white font-['Outfit']">
-            {isLoading ? '...' : analytics?.total_flashcards_reviewed ?? 0}
+          <div className="text-2xl font-bold font-mono text-[#18181B]">
+            {isLoading ? '—' : analytics?.total_flashcards_reviewed ?? 0}
           </div>
-          <p className="text-[11px] text-slate-400">
-            {analytics?.known_flashcards_count ?? 0} mastered
+          <p className="text-[11px] text-[#8C877D]">
+            {analytics?.known_flashcards_count ?? 0} cards mastered
           </p>
         </div>
 
-        {/* Metric 5: Documents Ingested */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
+        {/* Metric 5 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
             <span>Documents</span>
-            <BookOpen className="w-4 h-4 text-sky-400" />
+            <BookOpen className="w-3.5 h-3.5 text-[#18181B]" />
           </div>
-          <div className="text-2xl font-bold text-white font-['Outfit']">
-            {isLoading ? '...' : analytics?.total_documents_uploaded ?? 0}
+          <div className="text-2xl font-bold font-mono text-[#18181B]">
+            {isLoading ? '—' : analytics?.total_documents_uploaded ?? 0}
           </div>
-          <p className="text-[11px] text-slate-400">PDFs / notes ingested</p>
+          <p className="text-[11px] text-[#8C877D]">PDFs indexed in RAG</p>
         </div>
 
-        {/* Metric 6: Study Plan Completion */}
-        <div className="glass-panel p-4 rounded-2xl border border-white/5 space-y-2">
-          <div className="flex items-center justify-between text-slate-400 text-xs">
-            <span>Plan Progress</span>
-            <Calendar className="w-4 h-4 text-pink-400" />
+        {/* Metric 6 */}
+        <div className="surface-card p-4 rounded-xl border border-[#E5E2D9] space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-mono uppercase text-[#8C877D]">
+            <span>Schedule</span>
+            <Calendar className="w-3.5 h-3.5 text-[#C25E34]" />
           </div>
-          <div className="text-2xl font-bold text-white font-['Outfit']">
-            {isLoading ? '...' : `${analytics?.study_plan_completion_rate ?? 0}%`}
+          <div className="text-2xl font-bold font-mono text-[#18181B]">
+            {isLoading ? '—' : `${analytics?.study_plan_completion_rate ?? 0}%`}
           </div>
-          <p className="text-[11px] text-slate-400">Timetable completed</p>
+          <p className="text-[11px] text-[#8C877D]">Plan milestones done</p>
         </div>
       </div>
 
-      {/* 3. QUICK ACTIONS GRID */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-white font-['Outfit']">Quick Study Tools</h2>
+      {/* 3. CORE STUDY WORKSPACES */}
+      <div className="space-y-3">
+        <div className="flex items-baseline justify-between border-b border-[#E5E2D9] pb-2">
+          <h2 className="text-base font-serif-title font-bold text-[#18181B]">
+            Study Modules
+          </h2>
+          <span className="text-[11px] font-mono text-[#8C877D]">
+            Select a specialized workspace
+          </span>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
             onClick={() => onNavigateTab('assistant')}
-            className="glass-card p-5 rounded-2xl cursor-pointer group space-y-3"
+            className="surface-card p-5 rounded-xl border border-[#E5E2D9] hover:border-[#C25E34] transition-all cursor-pointer group flex flex-col justify-between"
           >
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
-              <MessageSquare className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-center text-[#C25E34] group-hover:bg-[#C25E34] group-hover:text-white transition-colors">
+                <MessageSquare className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                  Adaptive AI Tutor
+                </h3>
+                <p className="text-xs text-[#57534E] mt-1 leading-relaxed">
+                  Engage in Socratic dialogue, step-by-step mathematical proofs, or concise exam summaries.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-white text-sm">Ask Study Assistant</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Query concepts in Explain Simply, Exam Prep, or Socratic mode.
-              </p>
+            <div className="mt-4 pt-3 border-t border-[#E5E2D9] flex items-center justify-between text-[11px] font-medium text-[#C25E34]">
+              <span>Open conversation</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('documents')}
-            className="glass-card p-5 rounded-2xl cursor-pointer group space-y-3"
+            className="surface-card p-5 rounded-xl border border-[#E5E2D9] hover:border-[#C25E34] transition-all cursor-pointer group flex flex-col justify-between"
           >
-            <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400 group-hover:scale-105 transition-transform">
-              <FileText className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-center text-[#18181B] group-hover:bg-[#18181B] group-hover:text-white transition-colors">
+                <FileText className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                  Document Archive
+                </h3>
+                <p className="text-xs text-[#57534E] mt-1 leading-relaxed">
+                  Upload syllabus PDFs and lecture slides for exact text chunking and page-grounded retrieval.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-white text-sm">Upload & Search Docs</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Ingest PDF or Word notes for grounded citations and passage retrieval.
-              </p>
+            <div className="mt-4 pt-3 border-t border-[#E5E2D9] flex items-center justify-between text-[11px] font-medium text-[#18181B]">
+              <span>Manage documents</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('quiz')}
-            className="glass-card p-5 rounded-2xl cursor-pointer group space-y-3"
+            className="surface-card p-5 rounded-xl border border-[#E5E2D9] hover:border-[#C25E34] transition-all cursor-pointer group flex flex-col justify-between"
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
-              <FileQuestion className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-center text-[#2D5A43] group-hover:bg-[#2D5A43] group-hover:text-white transition-colors">
+                <FileQuestion className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                  Examination Hall
+                </h3>
+                <p className="text-xs text-[#57534E] mt-1 leading-relaxed">
+                  Generate multiple-choice or short-answer exams with instant deterministic scoring and rationales.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-white text-sm">Practice Examinations</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Generate and submit quizzes with automatic deterministic grading.
-              </p>
+            <div className="mt-4 pt-3 border-t border-[#E5E2D9] flex items-center justify-between text-[11px] font-medium text-[#2D5A43]">
+              <span>Take assessment</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           <div
             onClick={() => onNavigateTab('planner')}
-            className="glass-card p-5 rounded-2xl cursor-pointer group space-y-3"
+            className="surface-card p-5 rounded-xl border border-[#E5E2D9] hover:border-[#C25E34] transition-all cursor-pointer group flex flex-col justify-between"
           >
-            <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 group-hover:scale-105 transition-transform">
-              <Calendar className="w-5 h-5" />
+            <div className="space-y-3">
+              <div className="w-9 h-9 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-center text-[#C25E34] group-hover:bg-[#C25E34] group-hover:text-white transition-colors">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                  Study Timetable
+                </h3>
+                <p className="text-xs text-[#57534E] mt-1 leading-relaxed">
+                  Organize daily revision slots leading up to university test dates with priority flags.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-white text-sm">Exam Study Timetable</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Construct personalized daily revision and practice test schedules.
-              </p>
+            <div className="mt-4 pt-3 border-t border-[#E5E2D9] flex items-center justify-between text-[11px] font-medium text-[#C25E34]">
+              <span>View schedule</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* 4. RECENT ACTIVITY & INGESTED DOCUMENTS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Ingested Documents */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit'] flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-cyan-400" />
-              <span>Recent Study Materials</span>
-            </h3>
+      {/* 4. RECENT STUDY MATERIALS & LOGGED SESSIONS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left: Ingested Documents Shelf */}
+        <div className="surface-card p-6 rounded-xl border border-[#E5E2D9] space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E2D9] pb-3">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-[#C25E34]" />
+              <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                Active Study Materials
+              </h3>
+            </div>
             <button
               onClick={() => onNavigateTab('documents')}
-              className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium"
+              className="text-xs text-[#C25E34] hover:text-[#A54C26] flex items-center gap-1 font-medium"
             >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>View Library</span>
+              <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           {recentDocs.length === 0 ? (
-            <div className="py-10 text-center space-y-3">
-              <FileText className="w-10 h-10 text-slate-600 mx-auto" />
-              <p className="text-xs text-slate-400">No study materials uploaded yet.</p>
+            <div className="py-12 text-center space-y-3 rounded-lg border border-dashed border-[#E5E2D9] bg-[#FAF9F5]">
+              <FileText className="w-8 h-8 text-[#8C877D] mx-auto" />
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-[#18181B]">No documents uploaded yet</p>
+                <p className="text-[11px] text-[#8C877D] max-w-xs mx-auto">
+                  Add syllabus PDFs, lecture slides, or textbook chapters to enable grounded AI citations.
+                </p>
+              </div>
               <button
                 onClick={() => onNavigateTab('documents')}
-                className="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-medium"
+                className="px-3 py-1.5 rounded-md btn-terracotta text-xs font-semibold"
               >
-                Upload First File
+                Upload First Document
               </button>
             </div>
           ) : (
@@ -257,26 +305,26 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateTab }) =
               {recentDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs"
+                  className="p-3 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-between text-xs hover:border-[#8C877D] transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-cyan-400 font-mono font-bold text-[10px]">
-                      {doc.file_type}
-                    </div>
-                    <div>
-                      <div className="font-medium text-white truncate max-w-[220px]">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-[#EAE7DF] text-[#57534E]">
+                      {doc.file_type.toUpperCase()}
+                    </span>
+                    <div className="truncate">
+                      <div className="font-semibold text-[#18181B] truncate">
                         {doc.original_name}
                       </div>
-                      <div className="text-[11px] text-slate-400">
-                        {doc.page_count} pages • {doc.chunk_count} chunks • {(doc.file_size / 1024).toFixed(1)} KB
+                      <div className="text-[11px] font-mono text-[#8C877D]">
+                        {doc.page_count} pages • {doc.chunk_count} passages • {(doc.file_size / 1024).toFixed(1)} KB
                       </div>
                     </div>
                   </div>
                   <button
                     onClick={() => onNavigateTab('assistant')}
-                    className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px]"
+                    className="px-2.5 py-1 rounded bg-[#FFFFFF] border border-[#E5E2D9] hover:border-[#C25E34] text-[#18181B] hover:text-[#C25E34] text-[11px] font-medium transition-colors shrink-0 ml-2"
                   >
-                    Ask
+                    Query
                   </button>
                 </div>
               ))}
@@ -284,43 +332,56 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateTab }) =
           )}
         </div>
 
-        {/* Real Activity Stream */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-['Outfit'] flex items-center gap-2">
-              <Clock className="w-4 h-4 text-violet-400" />
-              <span>Recorded Learning Sessions</span>
-            </h3>
+        {/* Right: Verified Learning Session Log */}
+        <div className="surface-card p-6 rounded-xl border border-[#E5E2D9] space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E5E2D9] pb-3">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#2D5A43]" />
+              <h3 className="font-serif-title font-bold text-sm text-[#18181B]">
+                Recorded Study Activity
+              </h3>
+            </div>
             <button
               onClick={() => onNavigateTab('analytics')}
-              className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 font-medium"
+              className="text-xs text-[#2D5A43] hover:underline flex items-center gap-1 font-medium"
             >
-              <span>Full Analytics</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>Full History</span>
+              <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           {!analytics || analytics.recent_activities.length === 0 ? (
-            <div className="py-10 text-center space-y-3">
-              <Clock className="w-10 h-10 text-slate-600 mx-auto" />
-              <p className="text-xs text-slate-400">No activity recorded yet. Start by asking a question or taking a quiz!</p>
+            <div className="py-12 text-center space-y-3 rounded-lg border border-dashed border-[#E5E2D9] bg-[#FAF9F5]">
+              <Compass className="w-8 h-8 text-[#8C877D] mx-auto" />
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-[#18181B]">No sessions logged yet</p>
+                <p className="text-[11px] text-[#8C877D] max-w-xs mx-auto">
+                  Ask the AI assistant a question or complete a practice quiz to record your academic milestones.
+                </p>
+              </div>
+              <button
+                onClick={() => onNavigateTab('assistant')}
+                className="px-3 py-1.5 rounded-md btn-secondary text-xs font-medium text-[#18181B]"
+              >
+                Start Learning Session
+              </button>
             </div>
           ) : (
             <div className="space-y-2.5">
               {analytics.recent_activities.slice(0, 5).map((act) => (
                 <div
                   key={act.id}
-                  className="p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs"
+                  className="p-3 rounded-lg bg-[#FAF9F5] border border-[#E5E2D9] flex items-center justify-between text-xs"
                 >
-                  <div className="space-y-0.5">
-                    <div className="font-semibold text-slate-200">{act.title}</div>
+                  <div className="space-y-0.5 min-w-0 pr-3">
+                    <div className="font-medium text-[#18181B] truncate">{act.title}</div>
                     {act.description && (
-                      <div className="text-[11px] text-slate-400 truncate max-w-[280px]">
+                      <div className="text-[11px] text-[#57534E] truncate">
                         {act.description}
                       </div>
                     )}
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500 uppercase px-2 py-0.5 rounded bg-slate-950">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#EAE7DF] text-[#57534E] shrink-0">
                     {act.activity_type}
                   </span>
                 </div>
@@ -332,3 +393,5 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateTab }) =
     </div>
   );
 };
+
+export default DashboardPage;

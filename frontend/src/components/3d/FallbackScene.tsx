@@ -1,43 +1,66 @@
 import React from 'react';
-import { Sparkles, Brain, Cpu, BookOpen } from 'lucide-react';
+import { Network, ArrowRight } from 'lucide-react';
 
 interface FallbackSceneProps {
   reason?: string;
+  onSelectConcept?: (conceptName: string) => void;
 }
 
-export const FallbackScene: React.FC<FallbackSceneProps> = ({ reason }) => {
+const CONCEPTS = [
+  { name: 'Data Structures', category: 'Foundations', connections: ['Algorithms', 'Database Systems'] },
+  { name: 'Algorithms', category: 'Core Theory', connections: ['Machine Learning', 'Compiler Design'] },
+  { name: 'Computer Architecture', category: 'Systems', connections: ['Operating Systems'] },
+  { name: 'Operating Systems', category: 'Systems', connections: ['Distributed Systems', 'Computer Networks'] },
+  { name: 'Computer Networks', category: 'Infrastructure', connections: ['Distributed Systems'] },
+  { name: 'Database Systems', category: 'Data & Storage', connections: ['Distributed Systems'] },
+  { name: 'Distributed Systems', category: 'Advanced Systems', connections: [] },
+  { name: 'Machine Learning', category: 'AI & Analytics', connections: [] },
+];
+
+export const FallbackScene: React.FC<FallbackSceneProps> = ({ reason, onSelectConcept }) => {
   return (
-    <div className="relative w-full h-[360px] md:h-[480px] flex items-center justify-center overflow-hidden rounded-2xl glass-panel border border-cyan-500/20">
-      {/* Ambient Radial Glow */}
-      <div className="absolute inset-0 bg-radial from-cyan-500/10 via-violet-500/5 to-transparent blur-2xl" />
-
-      {/* Decorative Constellation Rings */}
-      <div className="relative w-72 h-72 rounded-full border border-cyan-500/30 animate-pulse flex items-center justify-center">
-        <div className="w-56 h-56 rounded-full border border-violet-500/30 animate-[spin_12s_linear_infinite] flex items-center justify-center">
-          <div className="w-40 h-40 rounded-full border border-cyan-400/40 animate-[spin_8s_linear_infinite_reverse] flex items-center justify-center">
-            <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-cyan-600 to-violet-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-              <Brain className="w-12 h-12 text-white animate-pulse" />
-            </div>
-          </div>
+    <div className="surface-card rounded-xl p-6 border border-[#E5E2D9] space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-[#E5E2D9]">
+        <div className="flex items-center gap-2">
+          <Network className="w-4 h-4 text-[#C25E34]" />
+          <h3 className="font-semibold text-sm text-[#18181B] font-serif-title">
+            Curriculum Knowledge Graph
+          </h3>
         </div>
-
-        {/* Orbiting Concept Nodes */}
-        <div className="absolute top-2 left-10 p-2.5 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 shadow-md">
-          <Sparkles className="w-4 h-4" />
-        </div>
-        <div className="absolute bottom-4 right-10 p-2.5 rounded-full bg-slate-900 border border-violet-500/40 text-violet-400 shadow-md">
-          <Cpu className="w-4 h-4" />
-        </div>
-        <div className="absolute top-1/2 -left-3 p-2.5 rounded-full bg-slate-900 border border-cyan-400/40 text-cyan-300 shadow-md">
-          <BookOpen className="w-4 h-4" />
-        </div>
+        {reason && (
+          <span className="text-[11px] font-mono text-[#8C877D] bg-[#F5F3ED] px-2 py-0.5 rounded">
+            {reason}
+          </span>
+        )}
       </div>
 
-      {/* Accessible caption */}
-      <div className="absolute bottom-4 text-center px-4">
-        <p className="text-xs font-medium text-slate-400">
-          Knowledge Network Visualization {reason ? `(${reason})` : ''}
-        </p>
+      <p className="text-xs text-[#57534E] leading-relaxed">
+        Conceptual prerequisite network mapping core computer science subjects. Select any topic to inspect its relationships or launch an active study session.
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+        {CONCEPTS.map((concept) => (
+          <div
+            key={concept.name}
+            onClick={() => onSelectConcept?.(concept.name)}
+            className="p-3.5 rounded-lg border border-[#E5E2D9] bg-[#FDFCFB] hover:border-[#C25E34]/50 hover:bg-[#FBF2ED] transition-all cursor-pointer group space-y-1.5"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-[#8C877D] tracking-wider">
+                {concept.category}
+              </span>
+              <ArrowRight className="w-3 h-3 text-[#C25E34] opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="text-xs font-semibold text-[#18181B] group-hover:text-[#C25E34] transition-colors">
+              {concept.name}
+            </div>
+            {concept.connections.length > 0 && (
+              <div className="text-[11px] text-[#57534E]">
+                Feeds into: <span className="font-medium text-[#18181B]">{concept.connections.join(', ')}</span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

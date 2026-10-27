@@ -20,7 +20,7 @@ DEFAULT_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 class Settings(BaseSettings):
     # Groq API Configuration
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-120b"
     
     # Server Configuration
     app_env: str = "development"
@@ -38,10 +38,12 @@ class Settings(BaseSettings):
     
     # Supported Groq Models
     supported_models: List[str] = [
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "qwen/qwen3.8-27b",
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
         "mixtral-8x7b-32768",
-        "gemma2-9b-it",
     ]
 
     model_config = SettingsConfigDict(

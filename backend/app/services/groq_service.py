@@ -93,12 +93,20 @@ class GroqService:
 
             except NotFoundError as e:
                 logger.error("Groq model '%s' not found: %s", active_model, str(e))
-                # Fallback to standard model if custom model not found
-                if active_model != "llama-3.3-70b-versatile":
-                    logger.info("Attempting fallback to 'llama-3.3-70b-versatile'")
-                    active_model = "llama-3.3-70b-versatile"
-                    continue
-                raise
+                fallback_candidates = [
+                    "openai/gpt-oss-120b",
+                    "openai/gpt-oss-20b",
+                    "qwen/qwen3.8-27b",
+                    "llama-3.3-70b-versatile",
+                ]
+                for fb in fallback_candidates:
+                    if fb != active_model:
+                        logger.info("Attempting fallback to '%s'", fb)
+                        active_model = fb
+                        break
+                else:
+                    raise
+                continue
 
             except RateLimitError as e:
                 if attempt < max_retries:

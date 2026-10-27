@@ -9,7 +9,6 @@ import {
   Key,
   Database,
   ExternalLink,
-  Lock,
 } from 'lucide-react';
 import { PROJECT_METADATA } from '../constants/metadata';
 import { HealthInfo } from '../types';
@@ -20,60 +19,66 @@ interface AboutSettingsPageProps {
 
 export const AboutSettingsPage: React.FC<AboutSettingsPageProps> = ({ healthInfo }) => {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
-      {/* 1. HEADER */}
-      <div className="space-y-2 border-b border-white/10 pb-6">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-['Outfit'] flex items-center gap-2.5">
-          <Info className="w-7 h-7 text-cyan-400" />
-          <span>Project Identity, Academic Credits & Configuration</span>
+    <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+      {/* 1. EDITORIAL HEADER */}
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-2">
+        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#F3F1EC] border border-[#E5E2D9] text-[11px] font-mono text-[#57534E]">
+          <Info className="w-3.5 h-3.5 text-[#C25E34]" />
+          <span className="uppercase tracking-wider">Academic Documentation</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-serif-title font-bold text-[#18181B] tracking-tight">
+          System Identity & Configuration
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm max-w-2xl">
-          Academic Mini Project documentation, verified student developer credits, model connection status, and security architecture.
+        <p className="text-xs sm:text-sm text-[#57534E] max-w-2xl leading-relaxed">
+          Mini-project documentation, verified student developer credits, Groq LLaMA 3.3 connectivity status, and data persistence architecture.
         </p>
       </div>
 
-      {/* 2. VERIFIED STUDENT CREDITS & INSTITUTION */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-cyan-400">
-          <GraduationCap className="w-4 h-4" />
-          <span>Academic Project Developers</span>
+      {/* 2. VERIFIED STUDENT DEVELOPER CREDITS & INSTITUTION */}
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-6">
+        <div className="flex items-center gap-2 border-b border-[#E5E2D9] pb-3">
+          <GraduationCap className="w-4 h-4 text-[#C25E34]" />
+          <h2 className="font-serif-title font-bold text-sm text-[#18181B]">
+            Academic Project Developers
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {PROJECT_METADATA.authors.map((author) => (
             <div
               key={author.name}
-              className="p-5 rounded-2xl bg-slate-900/80 border border-white/5 space-y-2"
+              className="p-5 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-2"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex items-center justify-center text-white font-bold text-base">
+                <div className="w-9 h-9 rounded-lg bg-[#C25E34] flex items-center justify-center text-white font-serif-title font-bold text-sm shadow-xs">
                   {author.name[0]}
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">{author.name}</h3>
-                  <p className="text-xs text-cyan-400 font-medium">{author.role}</p>
+                  <h3 className="text-sm font-serif-title font-bold text-[#18181B]">{author.name}</h3>
+                  <p className="text-xs text-[#C25E34] font-medium">{author.role}</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 pt-1">
+              <p className="text-xs text-[#57534E] pt-1 font-ui">
                 {author.qualification}
               </p>
             </div>
           ))}
         </div>
 
-        <div className="p-5 rounded-2xl bg-slate-950/60 border border-white/5 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-            <Building2 className="w-4 h-4 text-violet-400" />
+        {/* Institution Details */}
+        <div className="p-5 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#18181B]">
+            <Building2 className="w-4 h-4 text-[#C25E34]" />
             <span>Institution & Department</span>
           </div>
-          <div className="text-xs text-slate-300 space-y-1">
-            <div className="font-semibold text-white">{PROJECT_METADATA.institution.name}</div>
+          <div className="text-xs text-[#57534E] space-y-1 font-ui">
+            <div className="font-semibold text-[#18181B]">{PROJECT_METADATA.institution.name}</div>
             <div>{PROJECT_METADATA.institution.department}</div>
-            <div className="text-slate-400">
+            <div className="text-[#8C877D]">
               {PROJECT_METADATA.institution.city}, {PROJECT_METADATA.institution.state}, {PROJECT_METADATA.institution.country}
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-cyan-400 font-mono pt-1">
+          <div className="flex items-center gap-1.5 text-xs text-[#C25E34] font-mono pt-1">
             <Calendar className="w-3.5 h-3.5" />
             <span>Academic Year: {PROJECT_METADATA.academicYear}</span>
           </div>
@@ -81,83 +86,86 @@ export const AboutSettingsPage: React.FC<AboutSettingsPageProps> = ({ healthInfo
       </div>
 
       {/* 3. GROQ MODEL STATUS & CONFIGURATION */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-cyan-400">
-            <Cpu className="w-4 h-4" />
-            <span>AI Model & Inference Configuration</span>
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-6">
+        <div className="flex items-center justify-between border-b border-[#E5E2D9] pb-3">
+          <div className="flex items-center gap-2">
+            <Cpu className="w-4 h-4 text-[#18181B]" />
+            <h2 className="font-serif-title font-bold text-sm text-[#18181B]">
+              Inference & Model Status
+            </h2>
           </div>
           <span
-            className={`px-2.5 py-1 rounded-full text-[11px] font-mono uppercase ${
+            className={`px-2.5 py-0.5 rounded text-[11px] font-mono uppercase font-semibold ${
               healthInfo?.groq_configured
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                ? 'bg-[#EAF3EE] text-[#2D5A43] border border-[#2D5A43]/20'
+                : 'bg-[#FAF3E8] text-[#9A5B18] border border-[#9A5B18]/30'
             }`}
           >
-            {healthInfo?.groq_configured ? 'Groq Connected' : 'Demonstration Mode'}
+            {healthInfo?.groq_configured ? 'Groq Active' : 'Demo Mode'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
-            <span className="text-slate-400">Active Groq Model</span>
-            <div className="font-mono font-semibold text-white">
+          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-1">
+            <span className="text-[#8C877D] font-mono uppercase text-[10px]">Active Language Model</span>
+            <div className="font-mono font-semibold text-[#18181B]">
               {healthInfo?.active_model || 'llama-3.3-70b-versatile'}
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
-            <span className="text-slate-400">API Key Status</span>
-            <div className="font-mono font-semibold text-slate-200 flex items-center gap-2">
-              <Key className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{healthInfo?.masked_key || 'Not Configured'}</span>
+          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-1">
+            <span className="text-[#8C877D] font-mono uppercase text-[10px]">API Key Status</span>
+            <div className="font-mono font-semibold text-[#18181B] flex items-center gap-2">
+              <Key className="w-3.5 h-3.5 text-[#C25E34]" />
+              <span>{healthInfo?.masked_key || 'Configured via .env'}</span>
             </div>
           </div>
         </div>
 
-        {/* Setup Guide for Key */}
-        <div className="p-4 rounded-2xl bg-slate-950/80 border border-cyan-500/20 space-y-2 text-xs text-slate-300">
-          <h4 className="font-semibold text-white flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>How to Configure Groq API Key</span>
+        {/* Setup Guide */}
+        <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-2 text-xs text-[#57534E]">
+          <h4 className="font-semibold text-[#18181B] flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-[#2D5A43]" />
+            <span>Secure Configuration Architecture</span>
           </h4>
-          <p className="text-slate-400 leading-relaxed">
-            1. Obtain a free API key at{' '}
+          <p className="leading-relaxed font-ui">
+            1. Free Groq API keys are generated at{' '}
             <a
               href="https://console.groq.com/keys"
               target="_blank"
               rel="noreferrer"
-              className="text-cyan-400 hover:underline inline-flex items-center gap-0.5"
+              className="text-[#C25E34] hover:underline inline-flex items-center gap-0.5 font-medium"
             >
               console.groq.com/keys <ExternalLink className="w-3 h-3" />
             </a>
             .<br />
-            2. Copy <code>.env.example</code> to <code>.env</code> in the project directory.<br />
-            3. Set <code>GROQ_API_KEY=gsk_...</code> and restart the backend.<br />
-            4. The backend securely reads the key and keeps it off all client JavaScript.
+            2. Configure <code>GROQ_API_KEY=gsk_...</code> in the root <code>.env</code> file.<br />
+            3. Keys are accessed solely on the server side by FastAPI; no client JavaScript ever receives or transmits raw credentials.
           </p>
         </div>
       </div>
 
-      {/* 4. PERSISTENCE & DEPLOYMENT ARCHITECTURE */}
-      <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-400">
-          <Database className="w-4 h-4" />
-          <span>Storage & Deployment Architecture</span>
+      {/* 4. PERSISTENCE ARCHITECTURE */}
+      <div className="surface-card p-6 sm:p-8 rounded-xl border border-[#E5E2D9] space-y-4">
+        <div className="flex items-center gap-2 border-b border-[#E5E2D9] pb-3">
+          <Database className="w-4 h-4 text-[#18181B]" />
+          <h2 className="font-serif-title font-bold text-sm text-[#18181B]">
+            Data Storage & Persistence Architecture
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-2">
-            <h4 className="font-semibold text-white">Local Development</h4>
-            <p className="text-slate-400 leading-relaxed">
-              Uses lightweight SQLite with SQLAlchemy ORM. All chat sessions, chunks, quiz scores, and flashcard mastery records persist locally in <code>backend/data/studybuddy.db</code>.
+          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-2">
+            <h4 className="font-semibold text-[#18181B]">Local Persistence</h4>
+            <p className="text-[#57534E] leading-relaxed font-ui">
+              Lightweight SQLite engine managed by SQLAlchemy ORM. All chat histories, semantic passage chunks, quiz scores, and flashcard mastery flags persist in <code>backend/data/studybuddy.db</code>.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-2">
-            <h4 className="font-semibold text-white">Production Vercel Deployment</h4>
-            <p className="text-slate-400 leading-relaxed">
-              React + Vite frontend hosts on Vercel with zero runtime friction. FastAPI backend connects via <code>VITE_API_BASE_URL</code> to a hosted Python container with managed PostgreSQL.
+          <div className="p-4 rounded-xl bg-[#FAF9F5] border border-[#E5E2D9] space-y-2">
+            <h4 className="font-semibold text-[#18181B]">Cloud / Production Ready</h4>
+            <p className="text-[#57534E] leading-relaxed font-ui">
+              Easily swappable with managed PostgreSQL by configuring <code>DATABASE_URL</code> in <code>backend/.env</code>. The Vite frontend communicates via secure REST endpoints with CORS control.
             </p>
           </div>
         </div>
@@ -165,3 +173,5 @@ export const AboutSettingsPage: React.FC<AboutSettingsPageProps> = ({ healthInfo
     </div>
   );
 };
+
+export default AboutSettingsPage;

@@ -1,174 +1,90 @@
-import React, { useState } from 'react';
-import {
-  Sparkles,
-  BookOpen,
-  MessageSquare,
-  FileText,
-  FileQuestion,
-  Layers,
-  Calendar,
-  BarChart3,
-  Info,
-  Menu,
-  X,
-  LayoutDashboard,
-  Cpu,
-} from 'lucide-react';
-import { PROJECT_METADATA } from '../../constants/metadata';
+import React from 'react';
+import { Menu, Sparkles, Key, CheckCircle2 } from 'lucide-react';
 import { HealthInfo } from '../../types';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   healthInfo: HealthInfo | null;
+  onToggleMobileMenu: () => void;
 }
+
+const SECTION_TITLES: Record<string, { title: string; subtitle: string }> = {
+  landing: { title: 'StudyBuddy AI', subtitle: 'Product Story & Curriculum Architecture' },
+  dashboard: { title: 'Workspace Overview', subtitle: 'Study metrics and active roadmaps' },
+  assistant: { title: 'AI Study Assistant', subtitle: 'Adaptive pedagogical inquiry & tool calling' },
+  documents: { title: 'Document Archive', subtitle: 'Ingestion, text extraction & page passage retrieval' },
+  summarizer: { title: 'Knowledge Summarizer', subtitle: 'Multi-tier notes, definitions & exam questions' },
+  quiz: { title: 'Examination Hall', subtitle: 'Deterministic test taking & scoring diagnostic' },
+  flashcards: { title: 'Tactile Flashcards', subtitle: '3D spaced recall & targeted difficulty drill' },
+  planner: { title: 'Study Timetable', subtitle: 'Prioritized exam preparation schedule' },
+  analytics: { title: 'Performance Analytics', subtitle: 'Verified persistent study metrics' },
+  about: { title: 'Settings & Identity', subtitle: 'Academic documentation, model health & credits' },
+};
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   healthInfo,
+  onToggleMobileMenu,
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navItems = [
-    { id: 'landing', label: 'Home', icon: Sparkles },
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'assistant', label: 'AI Assistant', icon: MessageSquare },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'summarizer', label: 'Summarizer', icon: BookOpen },
-    { id: 'quiz', label: 'Quizzes', icon: FileQuestion },
-    { id: 'flashcards', label: 'Flashcards', icon: Layers },
-    { id: 'planner', label: 'Study Planner', icon: Calendar },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'about', label: 'About & Setup', icon: Info },
-  ];
+  const currentSection = SECTION_TITLES[activeTab] || SECTION_TITLES.dashboard;
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-panel border-b border-white/10 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <div
-            onClick={() => setActiveTab('landing')}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex items-center justify-center shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold tracking-tight text-white font-['Outfit']">
-                  StudyBuddy<span className="text-cyan-400">.AI</span>
-                </span>
-                <span className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono uppercase bg-cyan-950/70 text-cyan-300 border border-cyan-500/30 rounded">
-                  v{PROJECT_METADATA.version}
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-400 hidden sm:block truncate max-w-[200px]">
-                {PROJECT_METADATA.tagline}
-              </p>
-            </div>
-          </div>
+    <header className="sticky top-0 z-30 w-full h-14 bg-[#F9F8F6]/90 backdrop-blur-md border-b border-[#E5E2D9] px-4 sm:px-6 flex items-center justify-between">
+      {/* Left: Mobile Toggle & Section Title */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleMobileMenu}
+          className="lg:hidden p-1.5 rounded-md hover:bg-[#EAE7DF] text-[#57534E]"
+          aria-label="Toggle navigation menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    isActive
-                      ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm shadow-cyan-500/20'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                  }`}
-                >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* System Status Indicator & CTA */}
-          <div className="hidden sm:flex items-center gap-3">
-            <div
-              onClick={() => setActiveTab('about')}
-              className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-700/60 cursor-pointer hover:border-slate-500 transition-colors"
-              title={
-                healthInfo?.groq_configured
-                  ? `Groq Connected: ${healthInfo.active_model}`
-                  : 'Groq not configured (Demo Mode)'
-              }
-            >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  healthInfo?.groq_configured
-                    ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
-                    : 'bg-amber-400 shadow-[0_0_8px_#fbbf24]'
-                }`}
-              />
-              <span className="text-[11px] font-mono text-slate-300 flex items-center gap-1">
-                <Cpu className="w-3 h-3 text-slate-400" />
-                {healthInfo?.groq_configured ? (
-                  <span>{healthInfo.active_model.split('-')[0].toUpperCase()}</span>
-                ) : (
-                  <span className="text-amber-300">Demo</span>
-                )}
-              </span>
-            </div>
-
-            {activeTab === 'landing' ? (
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-500/25 transition-all hover:scale-[1.02]"
-              >
-                Launch App
-              </button>
-            ) : null}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-base font-bold text-[#18181B] font-serif-title leading-tight">
+            {currentSection.title}
+          </h1>
+          <span className="hidden sm:inline-block text-[11px] text-[#8C877D] font-ui">
+            / {currentSection.subtitle}
+          </span>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden glass-panel border-b border-white/10 px-4 pt-2 pb-4 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${
-                  isActive
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                    : 'text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
+      {/* Right: Status & Quick Actions */}
+      <div className="flex items-center gap-3">
+        {healthInfo?.groq_configured ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#EAF3EE] text-[#2D5A43] border border-[#2D5A43]/20 text-[11px] font-mono">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#2D5A43]" />
+            <span>Groq Connected</span>
+          </div>
+        ) : (
+          <button
+            onClick={() => setActiveTab('about')}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#FAF3E8] text-[#9A5B18] border border-[#9A5B18]/30 text-[11px] font-mono hover:bg-[#F5ECD7] transition-colors"
+          >
+            <Key className="w-3 h-3 text-[#9A5B18]" />
+            <span>Configure Groq Key</span>
+          </button>
+        )}
+
+        {activeTab === 'landing' ? (
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className="px-3 py-1 rounded-md btn-terracotta text-xs font-semibold shadow-xs"
+          >
+            Enter Workspace
+          </button>
+        ) : (
+          <button
+            onClick={() => setActiveTab('landing')}
+            className="px-3 py-1 rounded-md btn-secondary text-xs font-medium text-[#57534E]"
+          >
+            Product Story
+          </button>
+        )}
+      </div>
     </header>
   );
 };
